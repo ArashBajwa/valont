@@ -1,6 +1,11 @@
+//Deprecated, replaced by Game.js
+
 import Color from "./Color.js"	
 
 class Renderer {
+	/**
+	 * @param {HTMLCanvasElement} a canvas for 2d context drawing
+ 	*/
 	constructor(canvas) {
 		if (canvas instanceof HTMLCanvasElement == false)
 			throw("Renderer constructor expects canvas as first argument.");
@@ -16,13 +21,10 @@ class Renderer {
 		this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
 	}
 
-	draw = function(entity) {
+	draw = function() {
 				
 	}
 
-	__drawLoop = function() {
-		
-	}
 }
 
 Renderer.DEFAULT_CLEAR_COLOR = Color.BLACK;

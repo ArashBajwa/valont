@@ -1,10 +1,26 @@
-import Renderer from "./renderer/Renderer.js"	
-import Color from "./renderer/Color.js"	
+import Game from "./Game.js"
+import Entity from "./Entities/Entity.js"
+import Color from "./Graphics/Color.js"	
+import Vector2 from "./Math/Vector2.js"
+
+import Component from "./Entities/Component.js"
+import KinematicBodyComponent from "./Physics/KinematicBodyComponent.js"
+import StaticBodyComponent from "./Physics/StaticBodyComponent.js"
+import DrawableComponent from "./Graphics/DrawableComponent.js"
+import ImageComponent from "./Graphics/ImageComponent.js"
 
 
 export default {
-	Renderer: Renderer,
+	Game: Game,
+	Entity: Entity,
 	Color: Color,
+	Vector2: Vector2,
+
+	Component: Component,
+	KinematicBodyComponent: KinematicBodyComponent,
+	StaticBodyComponent: StaticBodyComponent,
+	DrawableComponent: DrawableComponent,
+	ImageComponent: ImageComponent
 };
 
 

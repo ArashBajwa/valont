@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<script src="../build/valont.js"></script>
+	</head>
+	<body>
+		<canvas id="falling-meteors-canvas" width="300" height=300></canvas>
+
+		<script>
+			let game = new valont.Game(document.querySelector("#falling-meteors-canvas"));
+			//let entityManager = game.getEntityManager();
+
+
+			let meteor = new valont.Entity();
+			let kinematicBodyComponent = new valont.KinematicBodyComponent();
+			meteor.addComponent(new valont.ImageComponent("meteor.png"));
+			meteor.addComponent(kinematicBodyComponent);
+
+			meteor.setPosition(new valont.Vector2(150, 150));
+			meteor.setSize(new valont.Vector2(48, 66));
+
+			kinematicBodyComponent.canCollide = false;
+			//kinematicBodyComponent.force = new Vector2(0,)
+
+
+			game.addEntity(meteor);
+
+
+			let oldTick = performance.now();
+			function step() {
+
+				game.clear(valont.Color.PURPLE_BLUE);
+				game.update(performance.now() - oldTick);
+
+				oldTick = performance.now();
+
+				window.requestAnimationFrame(step);
+			}
+
+			
+			window.requestAnimationFrame(step);
+
+
+
+
+			/*
+			OLD DESIGN CONCEPTS
+
+			let fallingSprite = new valont.Image(src);
+			fallingSprite.load(src)
+			fallingSprite.position = {x: 0, y:0} potential undefined errors, that may bececome hard
+
+			
+
+			renderer.clear(valont.Color.LIGHT_GRAY);
+
+			let fallingObject = new valont.Entity();
+			fallingObject.setPosition(1, 1)
+
+			let fallingSprite = new valont.Image(src);
+			
+			fallingObject.add(fallingSprite)
+
+			//fallingObject.add(new valont.Image(src);
+			//new valont.Image(src, fallingObject)
+
+
+			renderer.draw(entity)
+			
+
+			new Valont.Color
+			renderer.draw(fallingSprite, fallingObject);
+			
+			
+
+			let renderer = new valont.Renderer(document.querySelector("#falling-meteors-canvas"));
+
+			let entityManager = new valont.EntityManager();
+
+
+			renderer.addEntityManager(entityManager);
+
+
+			class Meteor {
+				constructor(position) {
+					this.meteorImageComponent = new valont.Image("meteor.png")
+				}
+			}
+
+
+			let meteor = new Meteor(new valont.Vector2());
+
+			let meteor = new valont.Entity();
+			meteor.addComponent(new valont.ImageComponent("meteor.png"));
+			meteor.addComponent(new valont.BodyMoverComponent());
+
+
+			entityManager.addEntity(meteor);
+
+			entityManager.linkToRenderer(renderer);
+
+
+			window.requestAnimationFrame(function() {
+				entityManager.getUpdatableComponents().forEach(component => {
+					physicsManager.update(component);
+				});
+				entityManager.getDrawableComponents().forEach(component => {
+					renderer.draw(component);
+				});
+
+				game.update();
+			})
+
+			*/
+
+		</script>
+	</body>
+</html>
+
+
+

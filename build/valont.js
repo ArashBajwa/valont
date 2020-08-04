@@ -5,6 +5,12 @@
 }(this, (function () { 'use strict';
 
 	class Color {
+		/**
+		 * @param {number} RED, 0-255
+		 * @param {number} BLUE 0-255
+		 * @param {number} GREEN 0-255
+		 * @param {number} ALPHA 0-1, 1 being completely visible 
+	 	*/
 		constructor(r=0, g=0, b=0, a=1) {
 			if (!(typeof(r) == "number" && typeof(g) == "number" && typeof(b) == "number" && typeof(a) == "number"))
 				throw("Color can only be constructed with at least 4 number argument types.");
@@ -41,9 +47,9 @@
 
 	// Color constants
 	Color.BLACK = new Color();
-	Color.DARKGREY = Color.DARKGRAY = new Color(64, 64, 64);
+	Color.DARK_GREY = Color.DARK_GRAY = Color.DARKGREY = Color.DARKGRAY = new Color(64, 64, 64);
 	Color.GREY = Color.GRAY = new Color(128, 128, 128);
-	Color.LIGHTGREY = Color.LIGHTGRAY = new Color(192, 192, 192);
+	Color.LIGHT_GREY = Color.LIGHT_GRAY = Color.LIGHTGREY = Color.LIGHTGRAY = new Color(192, 192, 192);
 	Color.WHITE = new Color(255, 255, 255);
 
 
@@ -62,32 +68,459 @@
 	Color.PURPLE = new Color(128, 0, 128);
 	Color.PURPLE_RED = Color.RED_PURPLE = Color.PURPLERED = Color.REDPURPLE  = new Color(192, 0, 64);
 
-	class Renderer {
-		constructor(canvas) {
-			if (canvas instanceof HTMLCanvasElement == false)
-				throw("Renderer constructor expects canvas as first argument.");
+	class Vector2 {
+		constructor(_x=0, _y=0) {
+			if (!(typeof(_x) == "number" && typeof(_y) == "number"))
+				throw "Vector2 can be only constructed with numbers!"
 
-			this.canvas = canvas;
-			this.context = canvas.getContext("2d");
-			if (this.context == null)
-				throw("Failed to get '2d' context from canvas!")
-		}
+			let _magnitudeSquared = _x**2 + _y**2;
+			let _magnitude = Math.sqrt(_magnitudeSquared);
 
-		clear = function( color=Renderer.DEFAULT_CLEAR_COLOR ) {
-			this.context.fillStyle = color.getRGBAString();
-			this.context.fillRect(0, 0, this.canvas.width, this.canvas.height);
-		}
+			let _normalizedX = _x/_magnitude;
+			let _normalizedY = 1-_normalizedX;
 
-		__drawLoop = function() {
+			this.getX = function(){
+				return _x;
+			};
 			
+			this.getY = function(){
+				return _y;
+			};
+
+			this.add = function (x, y) {
+				if (x instanceof Vector2)
+					return new Vector2(_x+x.getX(), _y+x.getY());
+				else if(typeof(x) == "number" && typeof(y) == "number")
+					return new Vector2(_x+x, _y+y);
+				else
+					throw("Vector2 adding expected vector or x and y number values");
+			};
+		
+			this.sub = function (x, y) {
+				if (x instanceof Vector2)
+					return new Vector2(_x-x.getX(), _y-x.getY());
+				else if(typeof(x) == "number" && typeof(y) == "number")
+					return new Vector2(_x-x, _y-y);
+				else
+					throw("Vector2 subtracting expected vector or x and y number values");
+			};
+		
+			this.mul = function (x, y) {
+				if (x instanceof Vector2)
+					return new Vector2(_x*x.getX(), _y*x.getY());
+				else if(typeof(x) == "number" && typeof(y) == "number")
+					return new Vector2(_x*x, _y*y);
+				else if (typeof(x) == "number") //vector.mul(2)
+					return new Vector2(_x*x, _y*x);
+				else
+					throw("Vector2 multiplying expected vector or x and y number values");
+			};
+			
+			this.div = function (x, y) {
+				if (x instanceof Vector2)
+					return new Vector2(_x/x.getX(), _y/x.getY());
+				else if(typeof(x) == "number" && typeof(y) == "number")
+					return new Vector2(_x/x, _y/y);
+				else if (typeof(x) == "number") //vector.div(2)
+					return new Vector2(_x/x, _y/x);
+				else
+					throw("Vector2 dividing expected vector or x and y number values");
+			};
+		
+			this.magnitude = function() {
+				return _magnitude;
+			};
+		
+			this.magnitudeSquared = function() {
+				return _magnitudeSquared;
+			};
+		
+			this.normalize = function() {
+				return new Vector2(_normalizedX, _normalizedY);
+			};
 		}
 	}
 
-	Renderer.DEFAULT_CLEAR_COLOR = Color.BLACK;
+	class Component {
+		constructor() {
+			this._parent = null;
+			this._absolutePosition = new Vector2(0, 0);
+			this._absoluteSize = new Vector2(1, 1);
+			this.size = new Vector2(1, 1);
+			this.position = new Vector2(0, 0);
+			this.name = "component";
+		}
+
+	}
+
+	class Entity {
+		constructor() {
+			let componentAddedEventListeners = [];
+			let componentRemovedEventListeners = [];
+			let components = [];
+
+
+			let size = new Vector2();
+			let position = new Vector2();
+
+
+			this.setPosition = function(newPosition) {
+				position = newPosition;
+				components.forEach(component => {
+					component._absolutePosition = newPosition.add(component.position);
+				});
+			};
+
+			this.getPosition = function() {
+				return position;
+			};
+
+			this.setSize = function(newSize) {
+				size = newSize;
+				components.forEach(component => {
+					component._absoluteSize = newSize.mul(component.size);
+				});
+			};
+
+			this.getComponents = function() {
+				return components;
+			};
+
+			this.FindFirstComponentByName = function(name) {
+				for (let index = 0; index < components.length; index++) {
+					if (components[index].name == name)
+						return components[index];
+				}
+			};
+
+			this.onComponentAdded = function(e) {
+				if (typeof(e) !== "function") {
+					throw "OnComponentedAdded Argument 1 expected a function"
+				}
+
+				componentAddedEventListeners.push(e);
+			};
+
+			this.onComponentRemoved = function(e) {
+				if (typeof(e) !== "function") {
+					throw "OnComponentedRemoved Argument 1 expected a function"
+				}
+
+				componentRemovedEventListeners.push(e);
+			};
+
+
+			this.addComponent = function(component) {
+				if (component instanceof Component) {
+					component._parent = this;
+					component._absolutePosition = position;
+					component._absoluteSize = size;
+					components.push(component);
+					componentAddedEventListeners.forEach(ev => ev(component));
+				}
+			};
+
+			this.removeComponent = function(component) {
+				if (component instanceof Component) {
+					let length = components.length;
+					components = components.filter(component !== component);
+					if (length < components.length)
+						componentRemovedEventListeners.forEach(ev => ev(component));
+				}
+			};
+
+			this.removeAllComponents = function() {
+				if (components.length > 0)
+					components.forEach(component => componentRemovedEventListeners.forEach(ev => ev(component)));
+
+				components = [];
+			};
+
+		}
+
+
+
+
+	}
+
+	//import Vector2 from "../Math/Vector2.js"	
+
+
+	/*
+	let DRAWABLE_COMPONENT_DEFAULT_SIZE = new Vector2(1, 1)
+	let DRAWABLE_COMPONENT_DEFAULT_POSITION = new Vector2(0, 0)
+	*/
+
+	class DrawableComponent extends Component {
+
+		constructor() {
+			super();
+		}
+
+		load = function() {
+			
+		}
+
+		draw = function () {
+
+		}
+
+
+
+	}
+
+	//import CollisionBox from "./CollisionBox.js" Future versions
+
+	class KinematicBodyComponent extends Component {
+		constructor() {
+			super();
+	//		let area = new CollisionBox();
+			this.name = "KinematicBody";
+			this.mass = 1;
+			this.gravity = KinematicBodyComponent.GRAVITY;
+			this.force = new Vector2();
+			this.canCollide = true;
+
+		}
+
+
+		update = function(deltaTime) {
+			this.force = this.force.add(this.gravity.mul(deltaTime));
+			this._parent.setPosition(this._parent.getPosition().add(this.force.mul(deltaTime)));
+		}
+
+		updateCollision = function(other) {
+			if (!this.canCollide)
+				return false;
+			//if (this.position.x < other.position.x + other. )
+		}
+	}
+
+	KinematicBodyComponent.GRAVITY = new Vector2(0, 0.001);
+
+	//import CollisionBox from "./CollisionBox.js" Future versions
+
+	class StaticBodyComponent extends Component {
+		constructor() {
+			super();
+	//		let area = new CollisionBox();
+			this.mass = 1;
+			
+			this.force = new Vector2();
+		}
+
+		updateCollision = function(other) {
+
+		}
+
+
+	}
+
+	class EntityManager {
+		constructor() {
+			let entities = [];
+			let drawableComponents = [];
+			let kinematicBodyComponents = [];
+			let staticBodyComponents = [];
+
+
+			function onComponentAdded(addedComponent) {
+				if (addedComponent instanceof DrawableComponent) 
+					drawableComponents.push(addedComponent);
+				else if (addedComponent instanceof KinematicBodyComponent) 
+					kinematicBodyComponents.push(addedComponent);
+				else if (addedComponent instanceof StaticBodyComponent) 
+					staticBodyComponents.push(addedComponent);
+			}
+			
+			function onComponentRemoved(removedComponent) {
+				if (removedComponent instanceof DrawableComponent)
+					drawableComponents = drawableComponents.filter(component => component !== removedComponent);
+				else if (removedComponent instanceof KinematicBodyComponent) 
+					kinematicBodyComponents = kinematicBodyComponents.filter(component => component !== removedComponent);
+				else if (removedComponent instanceof StaticBodyComponent) 
+					staticBodyComponents = staticBodyComponents.filter(component => component !== removedComponent);
+			}
+
+			this.getKinematicBodyComponents = function() {
+				return kinematicBodyComponents;
+			};
+
+			this.getStaticBodyComponents = function() {
+				return staticBodyComponents;
+			};
+
+			this.getDrawableComponents = function() {
+				return drawableComponents;
+			};
+
+			this.addEntity = function(addedEntity) {
+				if (addedEntity instanceof Entity && typeof(addedEntity.onComponentAdded) === "function" && typeof(addedEntity.onComponentRemoved) === "function") {
+					for (entity in entities) {
+						if (entity === addedEntity) {
+							return false; //Entity was already added
+						}
+					}
+
+					addedEntity.getComponents().forEach(component => onComponentAdded(component));
+					addedEntity.onComponentAdded(onComponentAdded);
+					addedEntity.onComponentRemoved(onComponentRemoved);
+					entities.push(addedEntity);
+				}
+			};
+
+			this.removeEntity = function(removedEntity) {
+				let length = entities.length;
+				entities = entities.filter(entity => entity !== removedEntity);
+				if (length < entities.length)
+					removedEntity.removeAllComponents();
+			};
+		}
+
+	}
+
+	class Game {
+		/**
+		 * @param {HTMLCanvasElement} a canvas for 2d context drawing
+	 	*/
+		constructor(canvas) {
+			if (canvas instanceof HTMLCanvasElement == false)
+				throw("Game constructor expects canvas as first argument.");
+
+			let context = canvas.getContext("2d");
+			if (context == null)
+				throw("Failed to get '2d' context from canvas!")
+
+			this.canvas = canvas;
+			this.context = context;
+			
+			let entityManager = new EntityManager();
+
+			this.addEntity = function(entity) {
+				entityManager.addEntity(entity);
+			};
+
+			this.removeEntity = function(entity) {
+				entityManager.removeEntity(entity);
+			};
+
+			this.clear = function( color=Game.DEFAULT_CLEAR_COLOR ) {
+				context.fillStyle = color.getRGBAString();
+				context.fillRect(0, 0, canvas.width, canvas.height);
+			};
+		
+
+			this.update = function(deltaTime) {
+				entityManager.getKinematicBodyComponents().forEach(component => {
+					entityManager.getKinematicBodyComponents().forEach(other => {
+						if (component !== other)
+							component.updateCollision(other);
+					});
+					component.update(deltaTime);
+
+					entityManager.getStaticBodyComponents().forEach(other => {
+						component.updateCollision(other);
+					});
+				});
+				entityManager.getDrawableComponents().forEach(component => {component.draw(context, deltaTime);});
+			};
+		}
+
+
+
+	}
+
+	Game.DEFAULT_CLEAR_COLOR = Color.BLACK;
+
+
+	/*
+	import Color from "./graphics/color.js"	
+
+	class Game {
+
+		 constructor(canvas) {
+			if (canvas instanceof HTMLCanvasElement == false)
+				throw("Game constructor expects canvas as first argument.");
+
+			let entities = [];
+				
+			let context = canvas.getContext("2d");
+			
+			if (context == null)
+				throw("Failed to get '2d' context from canvas!")
+
+			this.canvas = canvas;
+			this.context = context;
+
+
+			this.clear = function( color=Game.DEFAULT_CLEAR_COLOR ) {
+				context.fillStyle = color.getRGBAString();
+				context.fillRect(0, 0, canvas.width, canvas.height);
+			}
+			
+			this.update = function() {
+
+			}
+		}
+
+
+		
+	}
+
+	Game.DEFAULT_CLEAR_COLOR = Color.BLACK;
+
+	export default Game;
+	*/
+
+	let STORED_IMAGES = {}; //To serve as cache for images with same source
+	STORED_IMAGES[""] = new Image(); //Empty image
+
+	class ImageComponent extends DrawableComponent {
+		constructor (src="") {
+			super();
+			if (!(typeof(src) == "string"))
+				throw("Image cannot be contructed with given argument (string or undefined/null).");
+
+			this.src = src;
+			this._jsImage = STORED_IMAGES[""];
+
+			if (this.src != "")
+				this.load(src);
+		}
+
+		load = function(src="") {
+			if (!(typeof(src) == "string"))
+				throw("Image cannot be loaded with given argument.");
+
+			if (STORED_IMAGES[src] instanceof Image)
+				this._jsImage = STORED_IMAGES[src];
+			else {
+				this._jsImage = new Image(this._absoluteSize.x, this._absoluteSize.y);
+				this._jsImage.src = src;
+				STORED_IMAGES[src] = this._jsImage;
+			}
+
+			this._jsImage.src = src;
+		}
+
+
+		draw = function(context, deltaTime) {
+			context.drawImage(this._jsImage, this._absolutePosition.getX(), this._absolutePosition.getY(), this._absoluteSize.getX(), this._absoluteSize.getY());
+		}
+
+	}
 
 	var valont = {
-		Renderer: Renderer,
+		Game: Game,
+		Entity: Entity,
 		Color: Color,
+		Vector2: Vector2,
+
+		Component: Component,
+		KinematicBodyComponent: KinematicBodyComponent,
+		StaticBodyComponent: StaticBodyComponent,
+		DrawableComponent: DrawableComponent,
+		ImageComponent: ImageComponent
 	};
 
 
