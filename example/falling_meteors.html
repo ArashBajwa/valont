@@ -8,32 +8,42 @@
 
 		<script>
 			let game = new valont.Game(document.querySelector("#falling-meteors-canvas"));
-			//let entityManager = game.getEntityManager();
 
+			let meteorList = [];
+			let amountOfMeteors = Math.floor((300-48)/48);
+			
+			for (let index = 0; index<amountOfMeteors; index++) {
+				let meteor = new valont.Entity(index.toString());
+				let kinematicBodyComponent = new valont.KinematicBodyComponent();
+				meteor.addComponent(new valont.ImageComponent("meteor.png"));
+				meteor.addComponent(kinematicBodyComponent);
 
-			let meteor = new valont.Entity();
-			let kinematicBodyComponent = new valont.KinematicBodyComponent();
-			meteor.addComponent(new valont.ImageComponent("meteor.png"));
-			meteor.addComponent(kinematicBodyComponent);
+				meteor.setSize(new valont.Vector2(48, 66));
+				meteor.setPosition(new valont.Vector2(Math.random()*(300-48), -index*48*2));
+				kinematicBodyComponent.force = new valont.Vector2(0, 10);
 
-			meteor.setPosition(new valont.Vector2(150, 150));
-			meteor.setSize(new valont.Vector2(48, 66));
+				game.addEntity(meteor);
+				
+				kinematicBodyComponent.canCollide = false;
 
-			kinematicBodyComponent.canCollide = false;
-			//kinematicBodyComponent.force = new Vector2(0,)
-
-
-			game.addEntity(meteor);
-
-
+				meteorList[index] = meteor;
+			}
+			             
 			let oldTick = performance.now();
 			function step() {
+				let deltaTime = (performance.now() - oldTick)*0.001;
 
 				game.clear(valont.Color.PURPLE_BLUE);
-				game.update(performance.now() - oldTick);
+				game.update(deltaTime);
+
+
+				for (let index = 0; index<meteorList.length; index++) {
+					let meteor = meteorList[index];
+					if (meteor.getPosition().getY() > 300)
+						meteor.setPosition(new valont.Vector2(Math.random()*(300-48), -index*48*2));				
+				}
 
 				oldTick = performance.now();
-
 				window.requestAnimationFrame(step);
 			}
 
