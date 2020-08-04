@@ -154,7 +154,7 @@
 	}
 
 	class Entity {
-		constructor() {
+		constructor(name="") {
 			let componentAddedEventListeners = [];
 			let componentRemovedEventListeners = [];
 			let components = [];
@@ -163,6 +163,7 @@
 			let size = new Vector2();
 			let position = new Vector2();
 
+			this.name = name;
 
 			this.setPosition = function(newPosition) {
 				position = newPosition;
@@ -224,7 +225,7 @@
 				if (component instanceof Component) {
 					let length = components.length;
 					components = components.filter(component !== component);
-					if (length < components.length)
+					if (length > components.length)
 						componentRemovedEventListeners.forEach(ev => ev(component));
 				}
 			};
@@ -280,9 +281,13 @@
 			this.gravity = KinematicBodyComponent.GRAVITY;
 			this.force = new Vector2();
 			this.canCollide = true;
+			this.isKinematic = true;
 
 		}
 
+		onCollision = function(hit) {
+
+		}
 
 		update = function(deltaTime) {
 			this.force = this.force.add(this.gravity.mul(deltaTime));
@@ -292,11 +297,20 @@
 		updateCollision = function(other) {
 			if (!this.canCollide)
 				return false;
-			//if (this.position.x < other.position.x + other. )
+			if (
+				this._absolutePosition.getX() <= other._absolutePosition.getX() + other._absoluteSize.getX() &&
+				this._absolutePosition.getX() + this._absoluteSize.getX() >= other._absolutePosition.getX() &&
+
+				this._absolutePosition.getY() <= other._absolutePosition.getY() + other._absoluteSize.getY() &&
+				this._absolutePosition.getY() + this._absoluteSize.getY() >= other._absolutePosition.getY()
+			)
+			{
+				this.onCollision(other._parent);
+			}
 		}
 	}
 
-	KinematicBodyComponent.GRAVITY = new Vector2(0, 0.001);
+	KinematicBodyComponent.GRAVITY = new Vector2(0, 10);
 
 	//import CollisionBox from "./CollisionBox.js" Future versions
 
@@ -356,8 +370,8 @@
 
 			this.addEntity = function(addedEntity) {
 				if (addedEntity instanceof Entity && typeof(addedEntity.onComponentAdded) === "function" && typeof(addedEntity.onComponentRemoved) === "function") {
-					for (entity in entities) {
-						if (entity === addedEntity) {
+					for (let index = 0; index < entities.length; index++) {
+						if (entities[index] === addedEntity) {
 							return false; //Entity was already added
 						}
 					}
@@ -372,7 +386,7 @@
 			this.removeEntity = function(removedEntity) {
 				let length = entities.length;
 				entities = entities.filter(entity => entity !== removedEntity);
-				if (length < entities.length)
+				if (length > entities.length)
 					removedEntity.removeAllComponents();
 			};
 		}

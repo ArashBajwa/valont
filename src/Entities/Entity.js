@@ -2,7 +2,7 @@ import Component from "./Component.js"
 import Vector2 from "../Math/Vector2.js"
 
 class Entity {
-	constructor() {
+	constructor(name="") {
 		let componentAddedEventListeners = [];
 		let componentRemovedEventListeners = [];
 		let components = [];
@@ -11,6 +11,7 @@ class Entity {
 		let size = new Vector2();
 		let position = new Vector2();
 
+		this.name = name;
 
 		this.setPosition = function(newPosition) {
 			position = newPosition;
@@ -72,7 +73,7 @@ class Entity {
 			if (component instanceof Component) {
 				let length = components.length
 				components = components.filter(component !== component);
-				if (length < components.length)
+				if (length > components.length)
 					componentRemovedEventListeners.forEach(ev => ev(component));
 			}
 		}

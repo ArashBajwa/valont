@@ -45,8 +45,8 @@ class EntityManager {
 
 		this.addEntity = function(addedEntity) {
 			if (addedEntity instanceof Entity && typeof(addedEntity.onComponentAdded) === "function" && typeof(addedEntity.onComponentRemoved) === "function") {
-				for (entity in entities) {
-					if (entity === addedEntity) {
+				for (let index = 0; index < entities.length; index++) {
+					if (entities[index] === addedEntity) {
 						return false; //Entity was already added
 					}
 				}
@@ -61,7 +61,7 @@ class EntityManager {
 		this.removeEntity = function(removedEntity) {
 			let length = entities.length;
 			entities = entities.filter(entity => entity !== removedEntity);
-			if (length < entities.length)
+			if (length > entities.length)
 				removedEntity.removeAllComponents();
 		}
 	}
