@@ -26,7 +26,7 @@ Examples made so far to show some of these feature in action:
 * Breakout \
 [Game example](https://abajwa.itch.io/valont-breakout) \
 [Source code](/example/breakout.html) \
-(Has a glitch/issue where ball will delete multiple bricks, because it is touching multiple bricks, solution will be implemented later, which is adding a "AlreadyHit" debounce.
+(Has a glitch/issue where ball deletes multiple bricks, because it is touching multiple bricks, solution will be implemented later, which is adding a "AlreadyHit" debounce)
 
 The Breakout game example is a special case, it was created in order to compare [phaser 3's breakout source code](https://phaser.io/examples/v3/view/games/breakout/breakout) with the current stage of valont. Although I have no intention of competing with other game libraries, it was nonetheless interesting.
 
