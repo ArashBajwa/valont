@@ -57,15 +57,15 @@ class Vector2 {
 				throw("Vector2 dividing expected vector or x and y number values");
 		}
 	
-		this.magnitude = function() {
+		this.getMagnitude = function() {
 			return _magnitude;
 		}
 	
-		this.magnitudeSquared = function() {
+		this.getMagnitudeSquared = function() {
 			return _magnitudeSquared;
 		}
 	
-		this.normalize = function() {
+		this.getNormalized = function() {
 			return new Vector2(_normalizedX, _normalizedY);
 		}
 	}

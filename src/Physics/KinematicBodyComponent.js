@@ -35,6 +35,9 @@ class KinematicBodyComponent extends Component {
 			this._absolutePosition.getY() + this._absoluteSize.getY() >= other._absolutePosition.getY()
 		)
 		{
+			if (this.isKinematic) {
+				
+			}
 			this.onCollision(other._parent);
 		}
 	}

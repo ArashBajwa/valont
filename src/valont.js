@@ -8,7 +8,7 @@ import KinematicBodyComponent from "./Physics/KinematicBodyComponent.js"
 import StaticBodyComponent from "./Physics/StaticBodyComponent.js"
 import DrawableComponent from "./Graphics/DrawableComponent.js"
 import ImageComponent from "./Graphics/ImageComponent.js"
-
+import RectangleComponent from "./Graphics/RectangleComponent.js"
 
 export default {
 	Game: Game,
@@ -20,7 +20,8 @@ export default {
 	KinematicBodyComponent: KinematicBodyComponent,
 	StaticBodyComponent: StaticBodyComponent,
 	DrawableComponent: DrawableComponent,
-	ImageComponent: ImageComponent
+	ImageComponent: ImageComponent,
+	RectangleComponent: RectangleComponent
 };
 
 

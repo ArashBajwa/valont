@@ -127,15 +127,15 @@
 					throw("Vector2 dividing expected vector or x and y number values");
 			};
 		
-			this.magnitude = function() {
+			this.getMagnitude = function() {
 				return _magnitude;
 			};
 		
-			this.magnitudeSquared = function() {
+			this.getMagnitudeSquared = function() {
 				return _magnitudeSquared;
 			};
 		
-			this.normalize = function() {
+			this.getNormalized = function() {
 				return new Vector2(_normalizedX, _normalizedY);
 			};
 		}
@@ -181,6 +181,10 @@
 				components.forEach(component => {
 					component._absoluteSize = newSize.mul(component.size);
 				});
+			};
+
+			this.getSize = function() {
+				return size;
 			};
 
 			this.getComponents = function() {
@@ -305,6 +309,7 @@
 				this._absolutePosition.getY() + this._absoluteSize.getY() >= other._absolutePosition.getY()
 			)
 			{
+				if (this.isKinematic) ;
 				this.onCollision(other._parent);
 			}
 		}
@@ -524,6 +529,32 @@
 
 	}
 
+	class RectangleComponent extends DrawableComponent {
+
+		constructor(position=new Vector2(), size=new Vector2(1, 1)) {
+			super();
+			if (!(position instanceof Vector2 && size instanceof Vector2))
+				throw "RectangleComponent constructor initialized incorrectly, accepts none or two vector arguments.";
+
+			this.name = "RectangleComponent";
+			this.position = position;
+			this.size = size;
+			this.color = Color.BLACK;
+		}
+
+		load = function() {
+			
+		}
+
+		draw = function (context) {
+			context.fillStyle = this.color.getRGBAString();
+			context.fillRect(this._absolutePosition.getX(), this._absolutePosition.getY(), this._absoluteSize.getX(), this._absoluteSize.getY());
+		}
+
+
+
+	}
+
 	var valont = {
 		Game: Game,
 		Entity: Entity,
@@ -534,7 +565,8 @@
 		KinematicBodyComponent: KinematicBodyComponent,
 		StaticBodyComponent: StaticBodyComponent,
 		DrawableComponent: DrawableComponent,
-		ImageComponent: ImageComponent
+		ImageComponent: ImageComponent,
+		RectangleComponent: RectangleComponent
 	};
 
 

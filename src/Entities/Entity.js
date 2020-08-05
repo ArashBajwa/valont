@@ -31,6 +31,10 @@ class Entity {
 			});
 		}
 
+		this.getSize = function() {
+			return size;
+		}
+
 		this.getComponents = function() {
 			return components;
 		}

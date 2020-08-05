@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<script src="../build/valont.js"></script>
+	</head>
+	<body>
+		<canvas id="breakout-canvas" width="800" height="600"></canvas>
+
+		<script>
+			let game = new valont.Game(document.querySelector("#breakout-canvas"));
+
+			let gameState = "ready-to-start";
+
+			let paddle = new valont.Entity("paddle");
+			let ball = new valont.Entity("ball");
+			let ballKinetic = new valont.KinematicBodyComponent()
+			let brickList = [];
+
+			function createBricks() {
+				for (let brickX = 100; brickX < 700; brickX+=60) {
+					for (let brickY = 100; brickY <200; brickY+=20) {
+						let brick = new valont.Entity("brick");
+						brick.addComponent(new valont.RectangleComponent());
+						brick.FindFirstComponentByName("RectangleComponent").color = new valont.Color(Math.random()*255, Math.random()*255, Math.random()*255);
+						brick.setSize(new valont.Vector2(60, 20));
+						brick.setPosition(new valont.Vector2(brickX, brickY));
+						brick.addComponent(new valont.StaticBodyComponent());
+						game.addEntity(brick);
+						brickList.push(brick);
+					}
+				}
+			}
+
+			createBricks();
+
+			paddle.addComponent(new valont.RectangleComponent());
+			paddle.FindFirstComponentByName("RectangleComponent").color = valont.Color.LIGHTGREY;
+			paddle.addComponent(new valont.StaticBodyComponent());
+			paddle.setSize(new valont.Vector2(80, 20));
+			paddle.setPosition(new valont.Vector2(360, 500));
+
+			ballKinetic.gravity = new valont.Vector2(0, 0);
+			ball.addComponent(new valont.RectangleComponent());
+			ball.addComponent(ballKinetic)
+			ball.FindFirstComponentByName("RectangleComponent").color = valont.Color.BLUE_PURPLE;
+			ball.setSize(new valont.Vector2(20, 20));
+			ball.setPosition(new valont.Vector2(390, 460));
+
+			game.addEntity(paddle);
+			game.addEntity(ball);
+
+			ballKinetic.onCollision = function(other) {
+				if (gameState === "ready-to-start")
+					return;
+				if (other === paddle && ballKinetic.force.getY() > 0) {
+					let diff = (ball.getPosition().getX() - paddle.getPosition().getX())-40;
+					ballKinetic.force = new valont.Vector2(diff * 10, -300);
+				}
+				else if(other.name == "brick") {
+					if (ball.getPosition().getX() < other.getPosition().getX())  
+						ballKinetic.force = new valont.Vector2(-ballKinetic.force.getX(), ballKinetic.force.getY());
+					else if (ball.getPosition().getX() + ball.getSize().getX()  > other.getPosition().getX() + other.getSize().getX()) 
+						ballKinetic.force = new valont.Vector2(-ballKinetic.force.getX(), ballKinetic.force.getY());
+					else if(ball.getPosition().getY() < other.getPosition().getY() + other.getSize().getY())
+						ballKinetic.force = new valont.Vector2(ballKinetic.force.getX(), -ballKinetic.force.getY());
+					else
+						ballKinetic.force = new valont.Vector2(ballKinetic.force.getX(), -ballKinetic.force.getY());
+
+					brickList = brickList.filter(brick => brick !== other);
+					game.removeEntity(other);
+
+					if (brickList.length == 0) {
+						gameState = "ready-to-start";
+						ballKinetic.force = new valont.Vector2(0, 0);
+						ball.setPosition(paddle.getPosition().add(new valont.Vector2(30, -40)));
+						createBricks();
+					}
+				}
+			}
+			
+			let oldTick = performance.now(); 
+			function step() {
+				let deltaTime = (performance.now() - oldTick)*0.001;
+
+				game.clear();
+				game.update(deltaTime);
+
+				if (gameState === "playing") {
+					let posX = ball.getPosition().getX();
+					let posY = ball.getPosition().getY();
+					let forceX = ballKinetic.force.getX()
+					let forceY = ballKinetic.force.getY()
+					if (posY < 0 && forceY < 0)
+						ballKinetic.force = new valont.Vector2(forceX, -forceY);
+					else if(posY > 580) {
+						gameState = "ready-to-start";
+						ballKinetic.force = new valont.Vector2(0, 0);
+						ball.setPosition(paddle.getPosition().add(new valont.Vector2(30, -40)));
+					}
+
+					if (posX < 0 && forceX < 0) 
+						ballKinetic.force = new valont.Vector2(-forceX, forceY);
+					else if (posX > 780 && forceX > 0) 
+						ballKinetic.force = new valont.Vector2(-forceX, forceY);
+				}
+				
+				//elseif 
+
+				oldTick = performance.now();
+				window.requestAnimationFrame(step);
+			}
+
+			game.canvas.addEventListener("mousemove", function(mousePosition) {
+				paddle.setPosition(new valont.Vector2(Math.max(30, Math.min(770, mousePosition.clientX))-30, 500));
+				if (gameState === "ready-to-start") 
+					ball.setPosition(paddle.getPosition().add(new valont.Vector2(30, -40)));
+			});
+
+			game.canvas.addEventListener("mousedown", function() {
+				if (gameState === "ready-to-start") {
+					gameState = "playing";
+					ballKinetic.force = new valont.Vector2(-75, -300);
+				}
+			});
+
+			
+			window.requestAnimationFrame(step);
+		</script>
+	</body>
+</html>
+
+
+
