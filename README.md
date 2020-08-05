@@ -22,7 +22,7 @@ when it will be supported, code written before WebGL support will not require li
 Examples made so far to show some of these feature in action:
 * Falling meteors \
 [Game example](https://abajwa.itch.io/valont-falling-meteors) \
-[Source code](/example/falling-meteors.html)
+[Source code](/example/falling_meteors.html)
 * Breakout \
 [Game example](https://abajwa.itch.io/valont-breakout) \
 [Source code](/example/breakout.html) \
