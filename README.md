@@ -2,13 +2,13 @@
 ![Logo of Valont](valont_logo_github.png)
 \
 \
-The goal of this framework is to allow one to make a 2D game prototype rapidly while having good control "low level" control, especially for gamejams.
+The goal of this framework is to allow one to make a 2D game prototype rapidly, especially for gamejams.
 
 ## Status
 Documentation will be made soon.\
 Currently lacks some basic components such as spritesheet, sound that will allow games to made quickly, however games can still be made without these built-in components. \
 Since it is very much in its early infancy, it does not _yet_ have WebGL support,
-when it will be supported, code written before WebGL support will not require little to none change to be compatible with it.
+when it will be supported, code written before WebGL support will require little to none change to be compatible with it.
 
 ## Current features
 
