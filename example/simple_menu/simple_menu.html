@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<script src="../../build/valont.js"></script>
+	</head>
+	<body>
+		<canvas id="menu-canvas" width="800" height="600"></canvas>
+
+		<script>
+			let game = new valont.Game(document.querySelector("#menu-canvas"));
+
+			let testUI = new valont.Entity();
+			testUI.setPosition(new valont.Vector2(200, 200));
+			testUI.setSize(new valont.Vector2(200, 100));
+			testUI.addComponent(new valont.TextComponent("wow what a menu title :O!"));
+
+			game.addEntity(testUI);
+
+			let oldTick = performance.now(); 
+			function step() {
+				game.clear();
+				game.update(performance.now() - oldTick);
+
+				oldTick = performance.now();
+				window.requestAnimationFrame(step);
+			}
+			
+			window.requestAnimationFrame(step);
+		</script>
+	</body>
+</html>
+
+
+

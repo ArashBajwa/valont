@@ -555,6 +555,59 @@
 
 	}
 
+	class CircleComponent extends DrawableComponent {
+
+		constructor(position=new Vector2(), size=new Vector2(1, 1)) {
+			super();
+			if (!(position instanceof Vector2 && size instanceof Vector2))
+				throw "CircleComponent constructor initialized incorrectly, accepts none or two vector arguments.";
+
+			this.name = "CircleComponent";
+			this.position = position;
+			this.size = size;
+			this.color = Color.BLACK;
+		}
+
+		load = function() {
+			
+		}
+
+		draw = function (context) {
+			context.fillStyle = this.color.getRGBAString();
+			context.ellipse(this._absolutePosition.getX(), this._absolutePosition.getY(), this._absoluteSize.getX(), this._absoluteSize.getY());
+		}
+
+
+
+	}
+
+	class TextComponent extends DrawableComponent {
+
+		constructor(text="", textColor=TextComponent.DEFAULT_TEXT_COLOR) {
+			super();
+			if (!(typeof(text === "string") && textColor instanceof Color))
+				throw "TextComponent constructor initialized incorrectly, accepts none or #1 string argument and/or Color argument.";
+
+			this.name = "TextComponent";
+			this.text = text;
+			this.position = new Vector2();
+			this.size = new Vector2(1, 1);
+			//this.fontWidth = 18;
+			this.color = textColor;
+		}
+
+		load = function() {
+			
+		}
+
+		draw = function (context) {
+			context.fillStyle = this.color.getRGBAString();
+			context.fillText(this.text, this._absolutePosition.getX(), this._absolutePosition.getY());
+		}
+	}
+
+	TextComponent.DEFAULT_TEXT_COLOR = Color.WHITE;
+
 	var valont = {
 		Game: Game,
 		Entity: Entity,
@@ -566,7 +619,10 @@
 		StaticBodyComponent: StaticBodyComponent,
 		DrawableComponent: DrawableComponent,
 		ImageComponent: ImageComponent,
-		RectangleComponent: RectangleComponent
+		RectangleComponent: RectangleComponent,
+		CircleComponent: CircleComponent,
+
+		TextComponent: TextComponent
 	};
 
 

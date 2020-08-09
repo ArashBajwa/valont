@@ -22,10 +22,10 @@ when it will be supported, code written before WebGL support will require little
 Examples made so far to show some of these feature in action:
 * Falling meteors \
 [Game example](https://abajwa.itch.io/valont-falling-meteors) \
-[Source code](/example/falling_meteors.html)
+[Source code](/example/falling_meteors/falling_meteors.html)
 * Breakout \
 [Game example](https://abajwa.itch.io/valont-breakout) \
-[Source code](/example/breakout.html) \
+[Source code](/example/breakout/breakout.html) \
 (Has a glitch/issue where ball deletes multiple bricks, because it is touching multiple bricks, solution will be implemented later, which is adding a "AlreadyHit" debounce)
 
 The Breakout game example is a special case, it was created in order to compare [phaser 3's breakout source code](https://phaser.io/examples/v3/view/games/breakout/breakout) with the current stage of valont. Although I have no intention of competing with other game libraries, it was nonetheless interesting.

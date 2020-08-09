@@ -4,11 +4,17 @@ import Color from "./Graphics/Color.js"
 import Vector2 from "./Math/Vector2.js"
 
 import Component from "./Entities/Component.js"
+
 import KinematicBodyComponent from "./Physics/KinematicBodyComponent.js"
 import StaticBodyComponent from "./Physics/StaticBodyComponent.js"
+
 import DrawableComponent from "./Graphics/DrawableComponent.js"
 import ImageComponent from "./Graphics/ImageComponent.js"
 import RectangleComponent from "./Graphics/RectangleComponent.js"
+import CircleComponent from "./Graphics/CircleComponent.js"
+
+import TextComponent from "./UI/TextComponent.js"
+
 
 export default {
 	Game: Game,
@@ -21,7 +27,10 @@ export default {
 	StaticBodyComponent: StaticBodyComponent,
 	DrawableComponent: DrawableComponent,
 	ImageComponent: ImageComponent,
-	RectangleComponent: RectangleComponent
+	RectangleComponent: RectangleComponent,
+	CircleComponent: CircleComponent,
+
+	TextComponent: TextComponent
 };
 
 
