@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 	<head>
-		<script src="/build/valont.js"></script>
+		<script src="../../build/valont.js"></script>
 	</head>
 	<body>
 		<canvas id="breakout-canvas" width="800" height="600"></canvas>
@@ -14,6 +14,7 @@
 			let paddle = new valont.Entity("paddle");
 			let ball = new valont.Entity("ball");
 			let ballKinetic = new valont.KinematicBodyComponent()
+			let alreadyHit = false;
 			let brickList = [];
 
 			function createBricks() {
@@ -56,14 +57,15 @@
 					let diff = (ball.getPosition().getX() - paddle.getPosition().getX())-40;
 					ballKinetic.force = new valont.Vector2(diff * 10, -300);
 				}
-				else if(other.name == "brick") {
-					if (ball.getPosition().getX() < other.getPosition().getX())  
+				else if(other.name == "brick" && alreadyHit == false) {
+					alreadyHit = true;
+					if (ball.getPosition().getX() < other.getPosition().getX() + other.getSize().getX())  
 						ballKinetic.force = new valont.Vector2(-ballKinetic.force.getX(), ballKinetic.force.getY());
-					else if (ball.getPosition().getX() + ball.getSize().getX()  > other.getPosition().getX() + other.getSize().getX()) 
+					else if (ball.getPosition().getX() + ball.getSize().getX() > other.getPosition().getX()) 
 						ballKinetic.force = new valont.Vector2(-ballKinetic.force.getX(), ballKinetic.force.getY());
 					else if(ball.getPosition().getY() < other.getPosition().getY() + other.getSize().getY())
 						ballKinetic.force = new valont.Vector2(ballKinetic.force.getX(), -ballKinetic.force.getY());
-					else
+					else if (ball.getPosition().getY() < othe)
 						ballKinetic.force = new valont.Vector2(ballKinetic.force.getX(), -ballKinetic.force.getY());
 
 					brickList = brickList.filter(brick => brick !== other);
@@ -82,6 +84,7 @@
 			function step() {
 				let deltaTime = (performance.now() - oldTick)*0.001;
 
+				alreadyHit = false;
 				game.clear();
 				game.update(deltaTime);
 
