@@ -33,6 +33,7 @@ The Breakout game example is a special case, it was created in order to compare 
 
 
 # Basic necessities to implement
+* Basic UI Components (could be used for easier debugging as well), ~~Text~~, Button and TextBox
 * Implement basic physics engine with impulse response, that can disabled/enabled for customization purpose.
 * Create PhysicsBodyComponent, or similar to allow one to create their own physics body with custom physics.
 * Create CollisionArea object or type, which is used by Kinematic or static body component, to allow various type of shapes colliding with each other.
