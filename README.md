@@ -2,6 +2,7 @@
 ![Logo of Valont](valont_logo_github.png)
 \
 \
+(This codebase may be fully rewritten in upcoming days, it does the job, but it could better)
 The goal of this framework is to allow one to make a 2D game prototype rapidly, especially for gamejams.
 
 ## Status
@@ -25,7 +26,7 @@ Examples made so far to show some of these feature in action:
 [Source code](/example/falling_meteors/falling_meteors.html)
 * Breakout \
 [Game example](https://abajwa.itch.io/valont-breakout) \
-[Source code](/example/breakout/breakout.html) \
+[Source code](/example/breakout/breakout.html) (does not match game's source as, game is not up-to-date *yet*) \
 (Has a glitch/issue where ball has unreliable impulse system and also deletes multiple bricks, because it is touching multiple bricks, solution will be implemented later, which is adding a "AlreadyHit" debounce and better impulse system)
 
 The Breakout game example is a special case, it was created in order to compare [phaser 3's breakout source code](https://phaser.io/examples/v3/view/games/breakout/breakout) with the current stage of valont. Although I have no intention of competing with other game libraries, it was nonetheless interesting.
