@@ -2,7 +2,12 @@
 ![Logo of Valont](valont_logo_github.png)
 \
 \
-(This codebase may be fully rewritten in upcoming days, it does the job, but it could better)
+(
+This codebase may be fully rewritten in upcoming days, it does the job, but it could better
+The issue is that I am encoutering with javascript ES 6 is that to write secure code, I have to trade it off with performance and readability.
+I could use Babel, but I have a new idea which is using a transpiler, however I am thinking of writing a language which transpiles to javascript, and maybe compiling it or interpreting so that one can also play it offline.
+)
+
 The goal of this framework is to allow one to make a 2D game prototype rapidly, especially for gamejams.
 
 ## Status
